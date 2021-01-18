@@ -60,6 +60,11 @@ def safe_run(*args, **kwargs):
         None
     )
 
+    password = kwargs.get(
+        'password',
+        None
+    )
+
     # -- Define our mandatory elements for the perforce command
     cmd = [
         'p4',
@@ -87,6 +92,9 @@ def safe_run(*args, **kwargs):
 
     # -- Join it all together
     exec_str = ' '.join(formatted_items)
+
+    if password:
+        exec_str = 'echo {} | '.format(password) + exec_str
 
     # -- If we're meant to log debug info print off the command
     # -- we're about to run
@@ -270,9 +278,12 @@ class ThreadedP4Call(threading.Thread):
             records = []
             try:
                 while True:
+                    data = po.read()
+                    print("Raw: "+ str(data))
+                    d = marshal.loads(data)
                     records.append(
                         self._byte_dict_to_str_dict(
-                            marshal.load(po)
+                            d
                         )
                     )
 

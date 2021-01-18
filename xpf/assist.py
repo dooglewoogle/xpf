@@ -400,3 +400,31 @@ def is_editable(files):
             return False
 
     return True
+
+@failsafe.return_false
+def is_logged_in():
+    """
+    Returns true if there are any valid tickets or
+    """
+    if len(variables.get_tickets()) > 0:
+        return True
+
+    result = direct.run("tickets", marshal=False)
+    return len(result) > 0
+
+@failsafe.return_false
+def login_ssl(password):
+    """
+    Performs a login for servers that require a password login.
+    Sets the tickets if successful for later use.
+
+    :param password The users password
+    """
+    result = direct.run("login", password=password, marshal=False)
+
+    if "logged in" in result:
+        tickets = direct.run("tickets", marshal=False)
+        variables.set_tickets(tickets)
+        return True
+    else:
+        return False

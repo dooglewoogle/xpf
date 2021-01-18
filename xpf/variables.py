@@ -30,6 +30,9 @@ _DEBUG = False
 # -- Stores the currently active host as defined in p4 set
 _HOST = None
 
+# -- Stores all active tickets
+_TICKETS = []
+
 
 # ------------------------------------------------------------------------------
 def get_server_status():
@@ -106,3 +109,22 @@ def get_host():
 def set_host(value):
     global _HOST
     _HOST = value
+
+
+# ------------------------------------------------------------------------------
+def get_tickets():
+    return _TICKETS
+
+
+# ------------------------------------------------------------------------------
+def set_tickets(value, strformat=True):
+    global _TICKETS
+
+    data = {}
+    if strformat:
+        values = value.split(" ")
+        data['user'] = values[1][1:-1]
+        data['ticket'] = values[2]
+        _TICKETS.append(data)
+    else:
+        _TICKETS.append(value)
